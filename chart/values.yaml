@@ -60,9 +60,6 @@ ingress:
   includeDefaultExtraAnnotations: true
   extraAnnotations: {}
   ingressClassName: ""
-  # Certain ingress controllers will will require the pathType or path to be set to a different value.
-  pathType: ImplementationSpecific
-  path: "/"
   # backend port number
   servicePort: 80
 
@@ -87,6 +84,17 @@ service:
 letsEncrypt:
   # email: none@example.com
   environment: production
+  # http01 default or dns01 for extended support in CSPs
+  solver: 
+    http01:
+    #dns01:
+      #route53:
+        #accessKeyID: ""
+        #hostedZoneID: ""
+        #region: ""
+        #secretAccessKeySecretRef:
+          #key: ""
+          #name: ""
   ingress:
     # options: traefik, nginx
     class: ""
@@ -171,12 +179,19 @@ postDelete:
 # Set a bootstrap password. If leave empty, a random password will be generated.
 bootstrapPassword: ""
 
+startupProbe:
+  ## should be ready within 2 minutes
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 12
 livenessProbe:
-  initialDelaySeconds: 60
+  timeoutSeconds: 5
   periodSeconds: 30
+  failureThreshold: 5
 readinessProbe:
-  initialDelaySeconds: 5
+  timeoutSeconds: 5
   periodSeconds: 30
+  failureThreshold: 5
 
 global:
   cattle:
